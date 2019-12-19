@@ -14,7 +14,18 @@ logging.basicConfig()
 log = logging.getLogger('App.CLI')
 
 
+def checks(args):
+    if args['openvpn_location'] is None:
+        par.print_help()
+        par.error(
+            'Cannot find `openvpn` in $PATH, Please specify ' +
+            'with `-openvpn_location` or `-ol` path'
+        )
+
+
 def begin(args):
+
+    checks(args)
 
     queues = {}
     for t in ['api', 'vpn', 'pxy']:
@@ -85,15 +96,34 @@ def need_help(args):
     sys.exit()
 
 
-par = argparse.ArgumentParser(description="VPN-Rotator, (OpenVPN)",
+def which(program):
+    # Credit: https://stackoverflow.com/a/377028
+
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
+
+
+par = argparse.ArgumentParser(description="VPN-Rotator, (OpenVPN, HTTP Proxy Server, API Management)",
                               epilog="Contact us on GitHub if Broken")
 
 par.add_argument('-vpn_configs', '-vc', required=True,
                  help="Configuration Files, or Folder containing Configs (*.ovpn)",
                  metavar="FILE", type=lambda x: is_valid_configs(par, x))
 
-par.add_argument('-openvpn_location', '-ol', required=True,
-                 help="OpenVPN Binary Location, use this if not in $PATH",
+par.add_argument('-openvpn_location', '-ol', default=which('openvpn'),
+                 help="OpenVPN Binary Location, use this if not in $PATH (default: %(default)s)",
                  metavar="FILE", type=lambda x: is_valid_executable(par, x))
 
 par.add_argument('-api_host', '-ah', default='0.0.0.0', type=str, nargs='?',

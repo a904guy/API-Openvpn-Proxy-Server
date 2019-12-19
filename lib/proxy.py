@@ -2,6 +2,7 @@ from box import Box
 import logging
 import multiprocessing
 import sys
+import time
 
 logging.basicConfig()
 log = logging.getLogger('App.PROXY')
@@ -28,7 +29,9 @@ class proxyController:
         log.info("Starting")
 
         self.running.set()
+        
+        import proxy
+        proxy.main(input_args=[])
+
         while not self.shutdown.is_set():
-            import proxy
-            proxy.main(input_args=[])
-        sys.exit()
+            time.sleep(1)

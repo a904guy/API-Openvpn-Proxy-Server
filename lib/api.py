@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 import logging
 import multiprocessing
 import sys
+import time
 
 logging.basicConfig()
 log = logging.getLogger('App.API')
@@ -66,6 +67,9 @@ class apiController:
             return status()
 
         self.running.set()
+        app.run()
+
         while not self.shutdown.is_set():
-            app.run()
+            time.sleep(1)
+            
         sys.exit()
