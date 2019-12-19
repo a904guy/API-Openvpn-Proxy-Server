@@ -1,6 +1,7 @@
 from glob import glob
 import argparse
 import logging
+import shutil
 import time
 import sys
 import os
@@ -95,25 +96,6 @@ def need_help(args):
     sys.exit()
 
 
-def which(program):
-    # Credit: https://stackoverflow.com/a/377028
-
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return exe_file
-
-    return None
-
-
 par = argparse.ArgumentParser(description="VPN-Rotator, (OpenVPN, HTTP Proxy Server, API Management)",
                               epilog="Contact us on GitHub if Broken")
 
@@ -121,7 +103,7 @@ par.add_argument('-vpn_configs', '-vc', required=True,
                  help="Configuration Files, or Folder containing Configs (*.ovpn)",
                  metavar="FILE", type=lambda x: is_valid_configs(par, x))
 
-par.add_argument('-openvpn_location', '-ol', default=which('openvpn'),
+par.add_argument('-openvpn_location', '-ol', default=shutil.which('openvpn'),
                  help="OpenVPN Binary Location, use this if not in $PATH (default: %(default)s)",
                  metavar="FILE", type=lambda x: is_valid_executable(par, x))
 
