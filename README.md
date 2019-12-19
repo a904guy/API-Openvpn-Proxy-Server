@@ -2,7 +2,7 @@
 An application to spin up a OpenVPN Server and Proxy Server, then manage, change, restart it from a HTTP API
 
 ```
-python app.py --help
+# python app.py --help
 usage: app.py [-h] --vpn_configs PATH --openvpn_location FILE
 
 VPN-Rotator, (OpenVPN, HTTP Proxy Server, API Management)
