@@ -23,6 +23,12 @@ def checks(args):
             'Please specify with `-openvpn_location` or `-ol` path'
         )
 
+    if len(args['vpn_configs']) == 0:
+        par.print_help()
+        par.error(
+            'No .ovpn files were found for usage in `--vpn_configs` or `-vc` paths'
+        )
+
 
 def begin(args):
 
@@ -96,16 +102,16 @@ def need_help(args):
     sys.exit()
 
 
-par = argparse.ArgumentParser(description="VPN-Rotator, (OpenVPN, HTTP Proxy Server, API Management)",
-                              epilog="Contact us on GitHub if Broken")
+par = argparse.ArgumentParser(description="VPN-Rotator, (OpenVPN, HTTP Proxy Server, API Management)", add_help=True,
+                              allow_abbrev=True, epilog="Contact us on GitHub https://github.com/a904guy/API-Openvpn-Proxy-Server/")
 
-par.add_argument('-vpn_configs', '-vc', required=True,
-                 help="Configuration Files, or Folder containing Configs (*.ovpn)",
-                 metavar="FILE", type=lambda x: is_valid_configs(par, x))
+par.add_argument('--vpn_configs', '-vc', required=True,
+                 help="Configuration Files, or Folder containing Configs (*.ovpn) (Globs allowed)",
+                 metavar="PATH", type=lambda x: is_valid_configs(par, x))
 
-par.add_argument('-openvpn_location', '-ol', default=shutil.which('openvpn'),
-                 help="OpenVPN Binary Location, use this if not in $PATH (default: %(default)s)",
-                 metavar="FILE", type=lambda x: is_valid_executable(par, x))
+par.add_argument('--openvpn_location', '-ol', default=shutil.which('openvpn'),
+                 required=shutil.which('openvpn') is None, metavar="FILE", type=lambda x: is_valid_executable(par, x),
+                 help="OpenVPN Binary Location, use this if not in $PATH (default: %(default)s)")
 
 # TODO: Add customization arguments that "work" :)
 # par.add_argument('-api_host', '-ah', default='0.0.0.0', type=str, nargs='?',
