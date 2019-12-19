@@ -29,9 +29,11 @@ class proxyController:
         log.info("Starting")
 
         self.running.set()
-        
+
         import proxy
         proxy.main(input_args=[])
 
         while not self.shutdown.is_set():
             time.sleep(1)
+
+        sys.exit()

@@ -18,8 +18,8 @@ def checks(args):
     if args['openvpn_location'] is None:
         par.print_help()
         par.error(
-            'Cannot find `openvpn` in $PATH, Please specify ' +
-            'with `-openvpn_location` or `-ol` path'
+            'Cannot find `openvpn` binary location in $PATH, ' +
+            'Please specify with `-openvpn_location` or `-ol` path'
         )
 
 
@@ -42,9 +42,8 @@ def begin(args):
 
     # Launch Services Seperately from Main Process
     processes = []
-    processes.append(multiprocessing.Process(target=api._process))
-    processes.append(multiprocessing.Process(target=vpn._process))
-    processes.append(multiprocessing.Process(target=pxy._process))
+    for p in [api, vpn, pxy]:
+        processes.append(multiprocessing.Process(target=p._process))
 
     # Should we shutdown?
     def should_shutdown():
@@ -126,17 +125,18 @@ par.add_argument('-openvpn_location', '-ol', default=which('openvpn'),
                  help="OpenVPN Binary Location, use this if not in $PATH (default: %(default)s)",
                  metavar="FILE", type=lambda x: is_valid_executable(par, x))
 
-par.add_argument('-api_host', '-ah', default='0.0.0.0', type=str, nargs='?',
-                 help="""Set api listening host (default: %(default)s)""")
+# TODO: Add customization arguments that "work" :)
+# par.add_argument('-api_host', '-ah', default='0.0.0.0', type=str, nargs='?',
+#                  help="""Set api listening host (default: %(default)s)""")
 
-par.add_argument('-api_port', '-ap', default=7777, type=int, nargs='?',
-                 help="""Set api listening port (default: %(default)s)""")
+# par.add_argument('-api_port', '-ap', default=7777, type=int, nargs='?',
+#                  help="""Set api listening port (default: %(default)s)""")
 
-par.add_argument('-proxy_host', '-ph', default='0.0.0.0', type=str, nargs='?',
-                 help="""Set proxy listening host (default: %(default)s)""")
+# par.add_argument('-proxy_host', '-ph', default='0.0.0.0', type=str, nargs='?',
+#                  help="""Set proxy listening host (default: %(default)s)""")
 
-par.add_argument('-proxy_port', '-pp', default=9999, type=int, nargs='?',
-                 help="""Set proxy listening port (default: %(default)s)""")
+# par.add_argument('-proxy_port', '-pp', default=9999, type=int, nargs='?',
+#                  help="""Set proxy listening port (default: %(default)s)""")
 
 par.set_defaults(func=begin)
 
