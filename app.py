@@ -30,7 +30,7 @@ def checks(args):
         )
 
 
-def begin(args):
+def launch(args):
 
     checks(args)
 
@@ -69,7 +69,7 @@ def begin(args):
         time.sleep(1)
 
     log.info("Shutting Down Services")
-    # Allow time for the processes to end
+    # Allow time for the processes to end (Some aren't friendly)
     time.sleep(30)
 
     # Force Shutdown if Processes can't gracefully.
@@ -114,26 +114,25 @@ par.add_argument('--openvpn_location', '-ol', default=shutil.which('openvpn'),
                  help="OpenVPN Binary Location, use this if not in $PATH (default: %(default)s)")
 
 # TODO: Add customization arguments that "work" :)
-# par.add_argument('-api_host', '-ah', default='0.0.0.0', type=str, nargs='?',
+# par.add_argument('--api_host', '-ah', default='127.0.0.1', type=str, nargs='?',
 #                  help="""Set api listening host (default: %(default)s)""")
 
-# par.add_argument('-api_port', '-ap', default=7777, type=int, nargs='?',
+# par.add_argument('--api_port', '-ap', default=7777, type=int, nargs='?',
 #                  help="""Set api listening port (default: %(default)s)""")
 
-# par.add_argument('-proxy_host', '-ph', default='0.0.0.0', type=str, nargs='?',
+# par.add_argument('--proxy_host', '-ph', default='127.0.0.1', type=str, nargs='?',
 #                  help="""Set proxy listening host (default: %(default)s)""")
 
-# par.add_argument('-proxy_port', '-pp', default=9999, type=int, nargs='?',
+# par.add_argument('--proxy_port', '-pp', default=9999, type=int, nargs='?',
 #                  help="""Set proxy listening port (default: %(default)s)""")
 
-par.set_defaults(func=begin)
+par.set_defaults(func=launch)
 
-args = None
+# Parse Args from CLI
+args = par.parse_args().__dict__
+
+args['base_path'] = os.path.dirname(os.path.realpath(__file__))
 
 if __name__ == '__main__':
-    # Parse Args from CLI
-    args = par.parse_args().__dict__
-
-    args['base_path'] = os.path.dirname(os.path.realpath(__file__))
 
     args['func'](args)
